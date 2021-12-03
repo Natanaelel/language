@@ -2,6 +2,9 @@ function tokenize(code, patterns){
     
     let foundMatch = true
     let tokens = []
+
+    let mode = "code"
+
     while(foundMatch){
         foundMatch = false
         let match
