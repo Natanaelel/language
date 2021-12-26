@@ -12,7 +12,7 @@ const patterns = require("./patterns.js")
 let code = fs.readFileSync("./code.txt").toString()
 
 // code = fs.readFileSync("./code2.txt").toString()
-code = fs.readFileSync("./code3.txt").toString()
+code = fs.readFileSync("./code3.mylang").toString()
 
 // console.log(code)
 
