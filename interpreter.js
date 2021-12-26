@@ -23,7 +23,7 @@ function interpret(program){
         "func": [
             {
                 "type": "js",
-                "func": "let v = scope['arg1'].value;console.log((v instanceof String) ? v.replace(/\\./g, m=>({'\\\\n': '\\n', '\\\\\\\\': '\\\\'})[m]) : v)"
+                "func": "let v = scope['arg1'].value;console.log((v instanceof String) ? v.replace(/\\./g, m=>({'\\\\n': '\\n', '\\\\\\\\': '\\\\'})[m]) : v); scope['arg1']"
             }
         ]
     }
@@ -35,7 +35,7 @@ function interpret(program){
         "func": [
             {
                 "type": "js",
-                "func": "console.log((scope['arg1'].value)"
+                "func": "console.log(scope['arg1'].value);scope['arg1']"
             }
         ]
     }
@@ -47,7 +47,19 @@ function interpret(program){
         "func": [
             {
                 "type": "js",
-                "func": "evaluate(parse(tokenize(scope['code'].value, patterns)), scope)"
+                "func": "evaluate(parse(tokenize(scope['code'].value, patterns)).program, scope)"
+            }
+        ]
+    }
+    global["js_eval"] = {
+        "type": "function",
+        "args": [
+            "code"
+        ],
+        "func": [
+            {
+                "type": "js",
+                "func": "({type:'any',value: eval(scope['code'].value)})"
             }
         ]
     }
@@ -85,6 +97,7 @@ function evaluate_expression(expression, scope){
         }
         if(operator == "+") return add(left, right)
         if(operator == "*") return multiply(left, right)
+        if(operator == "==") return equals(left, right)
     }
     
     if(type == "call"){
@@ -113,8 +126,13 @@ function add(left, right){
             "value": left.value + right.value
         }
     }
+    console.error(`%ccan't add ${left.type} and ${right.type}`, "color:'#f00'")
+    return NIL
+}
+function equals(left, right){
     return {
-        "type": "nil"
+        "type": "bool",
+        "value": left.value === right.value // doesn't work with arrays and objects yet
     }
 }
 function call_func(func, args, scope){

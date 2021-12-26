@@ -1,6 +1,7 @@
-class Parser{
-    constructor(tokens){
+module.exports = class Parser {
+    constructor(tokens, logging = false){
         this.tokens = tokens
+        this.logging = logging
         this.PRECEDENCE = {
             "=": 1,
             "||": 2,
@@ -18,7 +19,7 @@ class Parser{
         while(this.tokens.length > 0){
             let expression = this.parseExpression()
             
-            console.log(["expression:", expression])
+            if(this.logging) console.log(["expression:", expression])
     
             parsed.push(expression)
         }
@@ -30,9 +31,9 @@ class Parser{
     }
 
     parseExpression() {
-        console.log("this")
-        console.log(this)
-        // console.log(this.maybe_call)
+        if(this.logging) console.log("this")
+        if(this.logging) console.log(this)
+        // if(this.logging) console.log(this.maybe_call)
         return this.maybe_call(this.maybe_binary(this.parseAtom(), 0))
     }
     parseAtom(){
@@ -48,7 +49,7 @@ class Parser{
             return expression
         }
         
-        if(["int", "float", "string_single", "string_double"].includes(type)){
+        if(["int", "float", "string_single", "string_double", "bool"].includes(type)){
             this.next_token()
             return {
                 "type": "literal",
@@ -67,7 +68,7 @@ class Parser{
             this.next_token()
             return this.parseAtom()
         }
-        console.log(first)
+        if(this.logging) console.log(first)
         throw new Error("Didn't parse an atom")
     
     }
@@ -109,11 +110,11 @@ class Parser{
                 first_iteration = false
             }else{
                 if(separator_value && this.isNextValue(separator_value)){
-                    console.log(`skipping next '${separator_value}'`)
+                    if(this.logging) console.log(`skipping next '${separator_value}'`)
                     this.skipNextValue(separator_value)
                 }else{
-                    console.log(`skipping next '${separator_type}'`)
-                    console.log(separator_value)
+                    if(this.logging) console.log(`skipping next '${separator_type}'`)
+                    if(this.logging) console.log(separator_value)
                     skipNextType(separator_type)
                 }
             }
@@ -154,8 +155,8 @@ class Parser{
     }
     
     maybe_call(expression){
-        console.log("maybe_call")
-        console.log(expression)
+        if(this.logging) console.log("maybe_call")
+        if(this.logging) console.log(expression)
         return this.isNextType("left_paren") ? this.parse_call(expression) : expression
     }
     
@@ -180,7 +181,3 @@ class Parser{
     }
 
 }
-
-
-
-module.exports = Parser

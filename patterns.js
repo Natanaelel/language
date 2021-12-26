@@ -1,5 +1,10 @@
 module.exports = [
     {
+        "type": "keyword",
+        "pattern": /^(if|else|for|while|break|next|redo|return|until|unless)/,
+        "match": "$0"
+    },
+    {
         "type": "newline",
         "pattern": /^\r?\n/,
         "match": "$0"
@@ -56,9 +61,9 @@ module.exports = [
     },
     {
         "type": "operator",
-        "pattern": /^(=|==|>|>=|<|<=|!=|===|!==|\+|\+=|-|-=|\*|\*=|\/|\/=|&&|\|\|\?\?|&|\||\^|~|\?|:)/,
+        "pattern": /^(==|=>|=|>|>=|<|<=|!=|===|!==|\+|\+=|-|-=|\*|\*=|\/|\/=|&&|\|\|\?\?|&|\||\^|~|\?|:)/,
         "match":  "$1",
-        "comment": "= == > >= < <= != === !== + += - -= * *= / /= && || ?? & | ^ ~ ? :"
+        "comment": "== => = > >= < <= != === !== + += - -= * *= / /= && || ?? & | ^ ~ ? :"
     },
     {
         "type": "left_paren",

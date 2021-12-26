@@ -37,8 +37,17 @@ function tokenize(code, patterns){
         console.warn("not everything parsed!")
     }
 
-    return tokens
+    return clean(tokens)
 
+}
+
+function clean(tokens){
+    return tokens.map(({type, value, line, position}) => {
+        if(type == "float") value = parseFloat(value)
+        if(type == "int") value = parseInt(value)
+        if(type == "bool") value = value == "true"
+        return {type, value, line, position}
+    })
 }
 
 

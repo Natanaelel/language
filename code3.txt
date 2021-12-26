@@ -9,4 +9,4 @@ puts(c)
 puts("hello w\"orld!")
 puts('abc \\123\'def')
 
-puts(eval("1+1"))
+p('1' == "1")
