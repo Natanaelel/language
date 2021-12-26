@@ -1,0 +1,162 @@
+{
+    "type": "program",
+    "program": [
+      {
+        "type": "literal",
+        "value": {
+          "type": "int",
+          "value": "1234123",
+          "line": 1,
+          "position": 0
+        }
+      },
+      {
+        "type": "binary_operation",
+        "operator": "+",
+        "left": {
+          "type": "literal",
+          "value": {
+            "type": "int",
+            "value": "0",
+            "line": 2,
+            "position": 0
+          }
+        },
+        "right": {
+          "type": "literal",
+          "value": {
+            "type": "float",
+            "value": "1.01",
+            "line": 2,
+            "position": 4
+          }
+        }
+      },
+      {
+        "type": "binary_operation",
+        "operator": "=",
+        "left": {
+          "type": "identifier",
+          "value": {
+            "type": "identifier",
+            "value": "a",
+            "line": 3,
+            "position": 0
+          }
+        },
+        "right": {
+          "type": "literal",
+          "value": {
+            "type": "int",
+            "value": "0",
+            "line": 3,
+            "position": 4
+          }
+        }
+      },
+      {
+        "type": "binary_operation",
+        "operator": "=",
+        "left": {
+          "type": "identifier",
+          "value": {
+            "type": "identifier",
+            "value": "b",
+            "line": 4,
+            "position": 0
+          }
+        },
+        "right": {
+          "type": "literal",
+          "value": {
+            "type": "int",
+            "value": "1",
+            "line": 4,
+            "position": 4
+          }
+        }
+      },
+      {
+        "type": "call",
+        "func": {
+          "type": "identifier",
+          "value": {
+            "type": "identifier",
+            "value": "print",
+            "line": 5,
+            "position": 0
+          }
+        },
+        "args": [
+          {
+            "type": "binary_operation",
+            "operator": "+",
+            "left": {
+              "type": "identifier",
+              "value": {
+                "type": "identifier",
+                "value": "a",
+                "line": 5,
+                "position": 6
+              }
+            },
+            "right": {
+              "type": "identifier",
+              "value": {
+                "type": "identifier",
+                "value": "b",
+                "line": 5,
+                "position": 10
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "call",
+        "func": {
+          "type": "identifier",
+          "value": {
+            "type": "identifier",
+            "value": "puts",
+            "line": 7,
+            "position": 0
+          }
+        },
+        "args": [
+          {
+            "type": "literal",
+            "value": {
+              "type": "string_single",
+              "value": "hello world!",
+              "line": 7,
+              "position": 5
+            }
+          }
+        ]
+      },
+      {
+        "type": "call",
+        "func": {
+          "type": "identifier",
+          "value": {
+            "type": "identifier",
+            "value": "say",
+            "line": 8,
+            "position": 0
+          }
+        },
+        "args": [
+          {
+            "type": "literal",
+            "value": {
+              "type": "string_single",
+              "value": "abc \\\\123\\'def",
+              "line": 8,
+              "position": 4
+            }
+          }
+        ]
+      }
+    ]
+  }

@@ -1,0 +1,12 @@
+1234123
+0 + 1.01
+a = 0
+b = 1
+c = 94 + b + a
+puts(a + b)
+puts(c)
+
+puts("hello w\"orld!")
+puts('abc \\123\'def')
+
+puts(eval("1+1"))

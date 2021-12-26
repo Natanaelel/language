@@ -1,10 +1,10 @@
 function tokenize(code, patterns){
+    code = code.replace(/\s+$/,"") // replace trailing whitespace
     
     let foundMatch = true
     let tokens = []
-
-    let mode = "code"
-
+    let line = 1
+    let position = 0
     while(foundMatch){
         foundMatch = false
         let match
@@ -13,26 +13,33 @@ function tokenize(code, patterns){
             match = code.match(token.pattern)
             if(match){
                 foundMatch = true
-                tokens.push([token.name, token.match.replace(/\$(\d+)/g, m => match[m[1]])])
-                code = code.replace(token.pattern, "")
+                let new_position
+                let new_line
+                code = code.replace(token.pattern, m => {
+                    let lines = m.split("\n")
+                    new_line = line + lines.length - 1
+                    new_position = lines.length > 1 ? lines[lines.length - 1].length : position + m.length
+                    return ""
+                })
+                tokens.push({
+                    "type": token.type,
+                    "value": token.match.replace(/\$(\d+)/g, m => match[m[1]]),
+                    "line": line,
+                    "position": position
+                })
+                position = new_position
+                line = new_line
                 break
             }
         }
     }
     if(code){
-        console.log("not everything parsed!")
+        console.warn("not everything parsed!")
     }
 
     return tokens
 
 }
-
-
-
-
-
-
-
 
 
 

@@ -7,3 +7,7 @@ print(a + b)
 
 puts('hello world!')
 say('abc \\123\'def')
+
+name = input("what is #{your} name?")
+
+print("hello #{"name"}")
