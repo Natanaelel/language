@@ -120,6 +120,18 @@ function add(left, right){
             "value": parseInt(left.value) + parseInt(right.value)
         }
     }
+    if(left.type == "int" && right.type == "float"){
+        return {
+            "type": "float",
+            "value": parseInt(left.value) + parseFloat(right.value)
+        }
+    }
+    if(left.type == "float" && right.type == "int"){
+        return {
+            "type": "float",
+            "value": parseFloat(left.value) + parseInt(right.value)
+        }
+    }
     if(left.type.includes("string") && right.type.includes("string")){
         return {
             "type": "string",
