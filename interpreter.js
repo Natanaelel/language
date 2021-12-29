@@ -1,7 +1,8 @@
 const tokenize = require("./tokenizer.js")
 const Parser = require("./parser_class.js")
 const patterns = require("./patterns.js")
-const {multiply} = require("./runtime/math.js")
+const {add, subtract, multiply, divide} = require("./runtime/math.js")
+const {equals} = require("./runtime/logic.js")
 // const runCode = require("./run.js")
 
 
@@ -102,7 +103,9 @@ function evaluate_expression(expression, scope){
         let right = evaluate_expression(expression.right, scope)
 
         if(operator == "+") return add(left, right)
+        if(operator == "-") return subtract(left, right)
         if(operator == "*") return multiply(left, right)
+        if(operator == "/") return divide(left, right)
         if(operator == "==") return equals(left, right)
     }
     if(type == "assignment"){
@@ -145,41 +148,13 @@ function evaluate_expression(expression, scope){
     // return "null lol"
     return NIL
 }
-function add(left, right){
-    // console.log("adding", left, "and", right)
-    if(left.type == "int" && right.type == "int"){
-        return {
-            "type": "int",
-            "value": parseInt(left.value) + parseInt(right.value)
-        }
-    }
-    if(left.type == "int" && right.type == "float"){
-        return {
-            "type": "float",
-            "value": parseInt(left.value) + parseFloat(right.value)
-        }
-    }
-    if(left.type == "float" && right.type == "int"){
-        return {
-            "type": "float",
-            "value": parseFloat(left.value) + parseInt(right.value)
-        }
-    }
-    if(left.type.includes("string") && right.type.includes("string")){
-        return {
-            "type": "string",
-            "value": left.value + right.value
-        }
-    }
-    console.error(`can't add ${left.type} and ${right.type}`)
-    return NIL
-}
-function equals(left, right){
-    return {
-        "type": "bool",
-        "value": left.value === right.value // doesn't work with arrays and objects yet
-    }
-}
+
+// function equals(left, right){
+//     return {
+//         "type": "bool",
+//         "value": left.type == right.type && left.value == right.value // doesn't work with arrays and objects yet
+//     }
+// }
 function call_func(func, args, scope){
     let function_scope = {}
     
@@ -214,7 +189,7 @@ function to_string(atom){
     if(type == "nil") return ""
     if(type == "string_single") return `${value}`
     if(type == "string_double") return `${value}`
-    if(type == "string") return `"${value}"`
+    if(type == "string") return `${value}`
     if(type == "value") return to_string(value)
     throw new Error(`can't convert ${value} of type ${type} to string`)
 }
