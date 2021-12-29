@@ -1,9 +1,5 @@
-const tokenize = require("./tokenizer.js")
-const Parser = require("./parser_class.js")
-const patterns = require("./patterns.js")
 const {add, subtract, multiply, divide} = require("./runtime/math.js")
 const {equals} = require("./runtime/logic.js")
-// const runCode = require("./run.js")
 
 
 const NIL = {
@@ -41,10 +37,6 @@ function interpret(program, settings){
     global["eval"] = {
         "type": "js_function",
         "func": (arg) => {
-            // let code = arg.value.toString()
-            // let tokenized = tokenize(code, patterns)
-            // let parsed = new Parser(tokenized, false).parseProgram().program
-            // return evaluate(parsed, global)
             let runCode = require("./run.js")
             return runCode(arg.value.toString())
         },

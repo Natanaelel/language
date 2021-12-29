@@ -1,5 +1,5 @@
 const tokenize = require("./tokenizer.js")
-const Parser = require("./parser_class.js")
+const Parser = require("./parser.js")
 const evaluate = require("./interpreter.js")
 
 const patterns = require("./patterns.js")
