@@ -30,6 +30,11 @@ module.exports = [
         "match": "$0"
     },
     {
+        "type": "nil",
+        "pattern": /^nil/,
+        "match": "$0"
+    },
+    {
         "type": "identifier",
         "pattern": /^[a-z_]\w*/i,
         "match": "$0"

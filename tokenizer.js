@@ -36,7 +36,7 @@ function tokenize(code, patterns){
     if(code){
         console.warn("not everything parsed!")
     }
-
+    tokens = remove_whitespace(tokens)
     return clean(tokens)
 
 }
@@ -46,10 +46,15 @@ function clean(tokens){
         if(type == "float") value = parseFloat(value)
         if(type == "int") value = parseInt(value)
         if(type == "bool") value = value == "true"
+        if(type == "nil") return {type: "nil", line, position}
+        if(type == "string_single" || type == "string_double") type = "string"
         return {type, value, line, position}
     })
 }
 
+function remove_whitespace(tokens) {
+    return tokens.filter(({type}) => type != "whitespace")
+}
 
 
 module.exports = tokenize

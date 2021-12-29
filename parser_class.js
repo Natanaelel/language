@@ -19,8 +19,6 @@ module.exports = class Parser {
         while(this.tokens.length > 0){
             let expression = this.parseExpression()
             
-            if(this.logging) console.log(["expression:", expression])
-    
             parsed.push(expression)
         }
         
@@ -31,9 +29,6 @@ module.exports = class Parser {
     }
 
     parseExpression() {
-        if(this.logging) console.log("this")
-        if(this.logging) console.log(this)
-        // if(this.logging) console.log(this.maybe_call)
         return this.maybe_call(this.maybe_binary(this.parseAtom(), 0))
     }
     parseAtom(){
@@ -49,7 +44,7 @@ module.exports = class Parser {
             return expression
         }
         
-        if(["int", "float", "string_single", "string_double", "bool"].includes(type)){
+        if(["int", "float", "string_single", "string_double", "bool", "nil", "string"].includes(type)){
             this.next_token()
             return {
                 "type": "literal",
@@ -59,10 +54,11 @@ module.exports = class Parser {
         
         if(type == "identifier"){
             this.skipNextType("identifier")
-            return {
-                "type": "identifier",
-                "value": first
-            }
+            // return {
+            //     "type": "identifier",
+            //     "value": first
+            // }
+            return first
         }
         if(type == "newline"){
             this.next_token()
@@ -140,13 +136,14 @@ module.exports = class Parser {
                 this.skipNextType("operator")
                 
                 let atom = this.parseAtom()
-                let right = this.maybe_binary(atom, other_precedence)
+                let right = this.maybe_call(this.maybe_binary(atom, other_precedence))
                 let binary = {
                     "type": "binary_operation",
                     "operator": operator.value,
                     "left": left,
                     "right": right
                 }
+                if(operator.value == "=") binary.type = "assignment"
                 return this.maybe_binary(binary, precedence)
             }
         }
@@ -155,8 +152,6 @@ module.exports = class Parser {
     }
     
     maybe_call(expression){
-        if(this.logging) console.log("maybe_call")
-        if(this.logging) console.log(expression)
         return this.isNextType("left_paren") ? this.parse_call(expression) : expression
     }
     

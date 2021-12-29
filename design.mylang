@@ -1,0 +1,31 @@
+func = {|a, b|
+
+    a + b
+
+}
+
+func = (a, b) => {
+    a + b
+}
+
+func = |x| x + 2
+
+if(asd){
+    
+
+}
+x += 1 if true
+x += 1 if !true
+x += 1 while x < 10
+x += 1 until x < 10
+x += 1 until (i++; x<2)
+
+
+arr.map( x => {
+
+})
+
+arr.map(0){|x|
+
+
+}
