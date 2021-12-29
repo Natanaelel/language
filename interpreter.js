@@ -1,76 +1,73 @@
 const tokenize = require("./tokenizer.js")
 const Parser = require("./parser_class.js")
 const patterns = require("./patterns.js")
-
+const {multiply} = require("./runtime/math.js")
+// const runCode = require("./run.js")
 
 
 const NIL = {
     "type": "nil"
 }
 function interpret(program, settings){
-    console.log()
-    console.log("+--------------------+")
-    console.log("|  Running program!  |")
-    console.log("+--------------------+")
-    console.log()
+    
+    if(settings?.pretty_running_program_sign) console.log(`
++--------------------+
+|  Running program!  |
++--------------------+
+`)
+
+
+    
     let global = {}
     
+
+    global["raw"] = {
+        "type": "js_function",
+        "func": (...args) => console.log(args),
+        "return_type": "nil"
+    }
+
     global["puts"] = {
-        "type": "function",
-        "args": [
-            "arg1"
-        ],
-        "func": [
-            {
-                "type": "js",
-                "old_func_do_not_use_hello_jello": "let v = scope['arg1'].value;console.log((v instanceof String) ? v.replace(/\\./g, m=>({'\\\\n': '\\n', '\\\\\\\\': '\\\\'})[m]) : v); scope['arg1']",
-                "func": "let v = scope['arg1'];console.log(to_string(v)); v"
-            }
-        ]
+        "type": "js_function",
+        "func": (...args) => console.log(args.map(to_string).join("\n")),
+        "return_type": "nil"
     }
     global["p"] = {
-        "type": "function",
-        "args": [
-            "arg1"
-        ],
-        "func": [
-            {
-                "type": "js",
-                "func": "console.log(inspect(scope['arg1']));scope['arg1']"
-            }
-        ]
+        "type": "js_function",
+        "func": (...args) => console.log(args.map(inspect).join("\n")),
+        "return_type": "string"
     }
     global["eval"] = {
-        "type": "function",
-        "args": [
-            "code"
-        ],
-        "func": [
-            {
-                "type": "js",
-                "func": `
-let tokenized = tokenize(scope['code'].value, patterns)
-let parsed = new Parser(tokenized, false).parseProgram()
-// console.log(JSON.stringify(parsed, null, 2))
-evaluate(parsed.program, global)
-`
-            }
-        ]
+        "type": "js_function",
+        "func": (arg) => {
+            // let code = arg.value.toString()
+            // let tokenized = tokenize(code, patterns)
+            // let parsed = new Parser(tokenized, false).parseProgram().program
+            // return evaluate(parsed, global)
+            let runCode = require("./run.js")
+            return runCode(arg.value.toString())
+        },
+        "return_type": "value"
+        
     }
     global["js_eval"] = {
-        "type": "function",
-        "args": [
-            "code"
-        ],
-        "func": [
-            {
-                "type": "js",
-                "func": "({type:'any',value: eval(scope['code'].value)})"
+        "type": "js_function",
+        "func": (arg, type) => {
+            if(arg.type == "string" && type.type == "string") return {
+                "type": type.value,
+                "value": eval(arg.value)
             }
-        ]
+            throw new Error("eval type must me string")
+        },
+        "return_type": "value"
+    }
+    global["random"] = {
+        "type": "js_function",
+        "func": Math.random,
+        "return_type": "float"
     }
     // evaluate(program.program, global, console.log)
-    evaluate(program.program, global, settings?.log_line ? console.log : (x=>x))
+    return evaluate(program.program, global, settings?.log_line ? console.log : (x=>x))
     
     return "exit code=0"
 }
@@ -87,6 +84,9 @@ function evaluate_expression(expression, scope){
     let type = expression.type
     if(type == "literal"){
         return expression.value
+    }
+    if(type == "value"){
+        return evaluate_expression(expression.value, scope)
     }
     if(type == "identifier"){
         // scoping error here, need recursive scope class
@@ -120,10 +120,25 @@ function evaluate_expression(expression, scope){
     if(type == "call"){
         let func = scope[expression.func.value]
         let args = expression.args.map(arg => evaluate_expression(arg, scope))
-        return call_func(func, args, scope)
+        if(func.type == "function"){
+            return call_func(func, args, scope)
+        }else if(func.type == "js_function"){
+            let args = expression.args.map(arg => evaluate_expression(arg, scope))
+            // let func = scope[expression.func.value]
+            return {
+                "type": func.return_type,
+                "value": func.func(...args)
+            }
+        }
+        throw new Error("waht function is this?")
     }
     if(type == "js"){
         return evaluate_js(expression, scope)
+    }
+    if(type == "js_func"){
+        let args = expression.args.map(arg => evaluate_expression(arg, scope))
+        let func = scope[expression.func.value]
+        return func(...args)
     }
     // console.log("type:", type)
 
@@ -156,7 +171,7 @@ function add(left, right){
             "value": left.value + right.value
         }
     }
-    console.error(`%ccan't add ${left.type} and ${right.type}`, "color:'#f00'")
+    console.error(`can't add ${left.type} and ${right.type}`)
     return NIL
 }
 function equals(left, right){
@@ -166,7 +181,6 @@ function equals(left, right){
     }
 }
 function call_func(func, args, scope){
-
     let function_scope = {}
     
     func.args.map((arg_name, i) => {
@@ -174,6 +188,7 @@ function call_func(func, args, scope){
     })
     
     return evaluate(func.func, function_scope)
+
 }
 function evaluate_js(expression, scope){
     return eval(expression.func)
@@ -187,6 +202,9 @@ function inspect(atom){
     if(type == "nil") return "nil"
     if(type == "string_single") return `'${value}'`
     if(type == "string_double") return `"${value}"`
+    if(type == "string") return `"${value}"`
+    if(type == "value") return inspect(value)
+    throw new Error(`can't inspect ${value} of type ${type}`)
 }
 function to_string(atom){
     let {type, value} = atom
@@ -196,6 +214,9 @@ function to_string(atom){
     if(type == "nil") return ""
     if(type == "string_single") return `${value}`
     if(type == "string_double") return `${value}`
+    if(type == "string") return `"${value}"`
+    if(type == "value") return to_string(value)
+    throw new Error(`can't convert ${value} of type ${type} to string`)
 }
 
 module.exports = interpret

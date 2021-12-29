@@ -13,6 +13,7 @@ function add(left, right){
             "value": add_string(left.value, right.value)
         }
     }
+    console.error(`can't add ${left.type} and ${right.type}`)
     return NIL
 }
 
@@ -20,7 +21,7 @@ function add(left, right){
 function multiply(left, right){
     if(left.type == "int" && right.type == "int"){
         return {
-            "type": "string",
+            "type": "int",
             "value": (parseInt(left.value) * parseInt(right.value)).toString()
         }
     }

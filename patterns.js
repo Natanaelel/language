@@ -109,6 +109,11 @@ module.exports = [
         "type": "range",
         "pattern": /^\.\.\.?/,
         "match":  "$0"
+    },
+    {
+        "type": "comment",
+        "pattern": /^#.*/,
+        "match": "$0"
     }
     
 ]

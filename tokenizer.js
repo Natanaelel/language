@@ -36,16 +36,17 @@ function tokenize(code, patterns){
     if(code){
         console.warn("not everything parsed!")
     }
+    tokens = remove_comments(tokens)
     tokens = remove_whitespace(tokens)
-    return clean(tokens)
-
+    tokens = clean(tokens)
+    return tokens
 }
 
 function clean(tokens){
     return tokens.map(({type, value, line, position}) => {
-        if(type == "float") value = parseFloat(value)
-        if(type == "int") value = parseInt(value)
-        if(type == "bool") value = value == "true"
+        // if(type == "float") value = parseFloat(value)
+        // if(type == "int") value = parseInt(value)
+        // if(type == "bool") value = value == "true"
         if(type == "nil") return {type: "nil", line, position}
         if(type == "string_single" || type == "string_double") type = "string"
         return {type, value, line, position}
@@ -54,6 +55,9 @@ function clean(tokens){
 
 function remove_whitespace(tokens) {
     return tokens.filter(({type}) => type != "whitespace")
+}
+function remove_comments(tokens) {
+    return tokens.filter(({type}) => type != "comment")
 }
 
 

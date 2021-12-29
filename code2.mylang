@@ -1,5 +1,7 @@
-# x = eval("1+1")
+x = eval("1 + 2 * 3", "int")
+x = eval("(1 + 2) * 3")
 
-x=0
-eval("x = 93")
+raw(x)
 p(x)
+
+# fac = {|n| n < 2 ? n : n * fac(n-1)}
