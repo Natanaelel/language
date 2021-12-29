@@ -1,7 +1,12 @@
-x = eval("1 + 2 * 3", "int")
-x = eval("(1 + 2) * 3")
-
-raw(x)
-p(x)
-
-# fac = {|n| n < 2 ? n : n * fac(n-1)}
+# x = f() ? y() : z()
+x = 0
+y = 0
+puts(x == y ? "yes" : "no")
+puts(x == y+1 ? "yes" : "no")
+puts(x * y ? "yes" : "no")
+puts(x - y ? "yes" : "no")
+# puts(x % y  ? "yes" : "no")
+raw(42%5)
+raw(42%5.0)
+raw(42/5.0)
+raw(5%3)

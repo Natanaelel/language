@@ -3,12 +3,15 @@ module.exports = class Parser {
         this.tokens = tokens
         this.logging = logging
         this.PRECEDENCE = {
-            "=": 1,
-            "||": 2,
-            "&&": 3,
-            "<": 7, ">": 7, "<=": 7, ">=": 7, "==": 7, "!=": 7,
-            "+": 10, "-": 10,
-            "*": 20, "/": 20, "%": 20,
+            "=": 2,
+            "||": 4,
+            "?": 3,
+            ":": 3,
+            "&&": 5,
+            "<": 10, ">": 10, "<=": 10, ">=": 10,
+            "==": 9, "!=": 9,
+            "+": 12, "-": 12,
+            "*": 13, "/": 13, "%": 13,
         }
         this.NIL = {
             "type": "nil"
@@ -29,7 +32,10 @@ module.exports = class Parser {
     }
 
     parseExpression() {
-        return this.maybe_call(this.maybe_binary(this.parseAtom(), 0))
+        let expression = this.parseAtom()
+        expression = this.maybe_call(expression)
+        expression = this.maybe_binary(expression, 0)
+        return expression
     }
     parseAtom(){
         if(this.tokens.length == 0) return this.NIL
@@ -64,6 +70,7 @@ module.exports = class Parser {
             this.next_token()
             return this.parseAtom()
         }
+        if(this.logging) console.log("didn't parse:")
         if(this.logging) console.log(first)
         throw new Error("Didn't parse an atom")
     
@@ -133,8 +140,23 @@ module.exports = class Parser {
             let other_precedence = this.PRECEDENCE[operator.value]
 
             if(other_precedence > precedence){
+                if(operator.value == "?"){
+                    let condition = left
+                    this.skipNextValue("?")
+                    let truthy = this.parseExpression()
+                    this.skipNextValue(":")
+                    let falsy = this.parseExpression()
+                    return {
+                        "type": "ternary",
+                        "condition": condition,
+                        "truthy": truthy,
+                        "falsy": falsy
+                    }
+
+                }
+                if(operator.value == ":") return left
+
                 this.skipNextType("operator")
-                
                 let atom = this.parseAtom()
                 let right = this.maybe_call(this.maybe_binary(atom, other_precedence))
                 let binary = {

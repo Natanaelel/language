@@ -1,9 +1,13 @@
-const {add, subtract, multiply, divide} = require("./runtime/math.js")
-const {equals} = require("./runtime/logic.js")
+const {add, subtract, multiply, divide, modulo} = require("./runtime/math.js")
+const {equals, truthy, falsy} = require("./runtime/logic.js")
 
 
 const NIL = {
     "type": "nil"
+}
+const escaped_chars = {
+    "\\n" : "\n",
+    "\\t": "\t"
 }
 function interpret(program, settings){
     
@@ -26,7 +30,7 @@ function interpret(program, settings){
 
     global["puts"] = {
         "type": "js_function",
-        "func": (...args) => console.log(args.map(to_string).join("\n")),
+        "func": (...args) => console.log(args.map(to_string).join("\n").replace(/\\./g, m => escaped_chars[m] || m[1])),
         "return_type": "nil"
     }
     global["p"] = {
@@ -98,7 +102,9 @@ function evaluate_expression(expression, scope){
         if(operator == "-") return subtract(left, right)
         if(operator == "*") return multiply(left, right)
         if(operator == "/") return divide(left, right)
+        if(operator == "%") return modulo(left, right)
         if(operator == "==") return equals(left, right)
+        if(operator == "!=") return not(equals(left, right))
     }
     if(type == "assignment"){
         let operator = expression.operator
@@ -127,6 +133,16 @@ function evaluate_expression(expression, scope){
         }
         throw new Error("waht function is this?")
     }
+
+    if(type == "ternary"){
+        let condition = evaluate_expression(expression.condition, scope)
+        if(truthy(condition)){
+            return evaluate_expression(expression.truthy, scope)
+        }else{
+            return evaluate_expression(expression.falsy, scope)
+        }
+    }
+
     if(type == "js"){
         return evaluate_js(expression, scope)
     }
@@ -141,12 +157,6 @@ function evaluate_expression(expression, scope){
     return NIL
 }
 
-// function equals(left, right){
-//     return {
-//         "type": "bool",
-//         "value": left.type == right.type && left.value == right.value // doesn't work with arrays and objects yet
-//     }
-// }
 function call_func(func, args, scope){
     let function_scope = {}
     

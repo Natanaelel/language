@@ -102,24 +102,28 @@ function multiply(left, right){
 
 function divide(left, right){
     if(left.type == "int" && right.type == "int"){
+        if(right.value == "0") throw new Error("MathError, can't divide by 0")
         return {
             "type": "int",
             "value": Math.trunc(parseInt(left.value) / parseInt(right.value)).toString()
         }
     }
     if(left.type == "int" && right.type == "float"){
+        if(right.value == "0") throw new Error("MathError, can't divide by 0")
         return {
             "type": "float",
             "value": (parseInt(left.value) / parseFloat(right.value)).toString()
         }
     }
     if(left.type == "float" && right.type == "int"){
+        if(right.value == "0") throw new Error("MathError, can't divide by 0")
         return {
             "type": "float",
             "value": (parseFloat(left.value) / parseInt(right.value)).toString()
         }
     }
     if(left.type == "float" && right.type == "float"){
+        if(right.value == "0") throw new Error("MathError, can't divide by 0")
         return {
             "type": "float",
             "value": (parseFloat(left.value) / parseFloat(right.value)).toString()
@@ -129,6 +133,47 @@ function divide(left, right){
     return NIL
 }
 
+function modulo(left, right){
+    if(left.type == "int" && right.type == "int"){
+        let left_val = parseInt(left.value)
+        let right_val = parseInt(right.value)
+        if(right.value == "0") throw new Error("MathError, can't modulo by 0")
+        return {
+            "type": "int",
+            "value": ((left_val % right_val + right_val) % right_val).toString()
+        }
+    }
+    if(left.type == "int" && right.type == "float"){
+        let left_val = parseInt(left.value)
+        let right_val = parseFloat(right.value)
+        if(right.value == "0") throw new Error("MathError, can't modulo by 0")
+        return {
+            "type": "float",
+            "value": ((left_val % right_val + right_val) % right_val).toString()
+        }
+    }
+    if(left.type == "float" && right.type == "int"){
+        let left_val = parseFloat(left.value)
+        let right_val = parseInt(right.value)
+        if(right.value == "0") throw new Error("MathError, can't modulo by 0")
+        return {
+            "type": "float",
+            "value": ((left_val % right_val + right_val) % right_val).toString()
+        }
+    }
+    if(left.type == "float" && right.type == "float"){
+        let left_val = parseFloat(left.value)
+        let right_val = parseFloat(right.value)
+        if(right.value == "0") throw new Error("MathError, can't modulo by 0")
+        return {
+            "type": "float",
+            "value": ((left_val % right_val + right_val) % right_val).toString()
+        }
+    }
+    throw new Error(`can't modulo ${left.type} and ${right.type}`)
+    return NIL
+}
+
 module.exports = {
-    add, subtract, multiply, divide
+    add, subtract, multiply, divide, modulo
 }
